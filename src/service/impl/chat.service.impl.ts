@@ -104,6 +104,7 @@ export class ChatServiceImpl implements ChatService {
       }
 
       case 'COURSE_LOOKUP': {
+          console.log('DEBUG: COURSE_LOOKUP HIT');
         const cleaned = TextUtil.clean(message);
         const keywords = TextUtil.extract(message);
         const modes = ['offline', 'online', 'hybrid'];
@@ -131,6 +132,16 @@ export class ChatServiceImpl implements ChatService {
           if (filtered.length > 0) return this.formatCourseList(filtered, null);
           return 'No courses found matching that duration.';
         }
+        const allCourses = await this.courseRepo.findByStatusTrue();
+
+        const nameMatch = allCourses.find(course =>
+          course.name &&
+          course.name.toLowerCase().includes(cleaned.toLowerCase())
+        );
+
+        if (nameMatch) {
+          return this.formatCourseDetail(nameMatch);
+        }
         const phraseMatch = await this.courseRepo.searchByKeyword(cleaned);
         if (phraseMatch.length === 1) return this.fillCourse(intent.responseTemplate, phraseMatch[0]);
         for (const kw of keywords) {
@@ -138,7 +149,7 @@ export class ChatServiceImpl implements ChatService {
           const results = await this.courseRepo.searchByKeyword(kw);
           if (results.length === 1) return this.fillCourse(intent.responseTemplate, results[0]);
         }
-        const allCourses = await this.courseRepo.findByStatusTrue();
+
         if (allCourses.length > 0) return this.formatCourseList(allCourses, null);
         return this.fallback(intent);
       }
