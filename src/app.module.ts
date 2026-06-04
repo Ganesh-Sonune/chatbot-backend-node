@@ -5,6 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { AuthService } from './service/auth.service';
+import { AuthServiceImpl } from './service/impl/auth.service.impl';
+
 import { AnalyticsController } from './controller/analytics.controller';
 import { AuthController } from './controller/auth.controller';
 import { BotConfigController } from './controller/bot-config.controller';
@@ -151,6 +154,10 @@ import { WhatsAppService } from './service/whatsapp.service';
         { provide: DurationParserService,   useClass: DurationParserServiceImpl,   },
         { provide: ReferralRepository,      useClass: ReferralRepositoryImpl,      },
         { provide: ReferralService,         useClass: ReferralServiceImpl,         },
+        {
+          provide: AuthService,
+          useClass: AuthServiceImpl
+        },
     ],
 })
 
