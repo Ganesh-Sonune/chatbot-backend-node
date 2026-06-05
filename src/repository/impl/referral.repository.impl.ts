@@ -28,6 +28,16 @@ export class ReferralRepositoryImpl extends ReferralRepository {
         return await this.repo.findOne({ where: { id, }, });
     }
 
+    async findByReferredPhone(
+        phone: string,
+    ): Promise<Referral | null> {
+        return await this.repo.findOne({
+            where: {
+                referredPhone: phone,
+            },
+        });
+    }
+
     async search(
         referrerPhone: string,
         referredPhone: string,
