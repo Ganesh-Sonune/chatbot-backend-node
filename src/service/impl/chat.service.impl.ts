@@ -114,7 +114,7 @@ export class ChatServiceImpl implements ChatService {
         return 'Sure! May I know your name?';
       }
 
-      //  Feature 1 — Course Fit Quiz
+
       case 'COURSE_QUIZ': {
         const state = new Map<string, string>();
         state.set('step', 'QUIZ_LEVEL');
@@ -348,7 +348,7 @@ export class ChatServiceImpl implements ChatService {
         referral.status        = 'PENDING';
         await this.referralRepo.save(referral);
 
-        //  Feature 3 — Notify sales team about referral
+
         this.whatsApp.notifyReferral(
           referral.referrerName,
           referral.referredName,

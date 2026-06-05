@@ -81,7 +81,7 @@ export class WhatsAppService {
       });
       this.logger.log(`WhatsApp sent to ${to}`);
     } catch (err: any) {
-      // Never throw — WhatsApp failure must NOT break the chat flow
+
       this.logger.error(`WhatsApp send failed to ${to}: ${err.message}`);
     }
   }
