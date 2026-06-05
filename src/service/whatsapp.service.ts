@@ -5,17 +5,21 @@ export class WhatsAppService {
   private readonly logger = new Logger(WhatsAppService.name);
   private client: any;
 
-  constructor() {
-    try {
-      const twilio = require('twilio');
-      this.client = twilio(
-        process.env.TWILIO_ACCOUNT_SID,
-        process.env.TWILIO_AUTH_TOKEN,
-      );
-    } catch (e) {
-      this.logger.warn('Twilio not initialized — WhatsApp messages will be skipped.');
-    }
-  }
+ constructor() {
+
+   console.log('SID =', process.env.TWILIO_ACCOUNT_SID);
+   console.log('FROM =', process.env.TWILIO_WHATSAPP_FROM);
+
+   try {
+     const twilio = require('twilio');
+     this.client = twilio(
+       process.env.TWILIO_ACCOUNT_SID,
+       process.env.TWILIO_AUTH_TOKEN,
+     );
+   } catch (e) {
+     this.logger.warn('Twilio not initialized — WhatsApp messages will be skipped.');
+   }
+ }
 
   async sendToStudent(phone: string, name: string, course: string): Promise<void> {
     if (!this.client) return;

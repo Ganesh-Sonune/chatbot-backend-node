@@ -44,6 +44,29 @@ export class ChatServiceImpl implements ChatService {
       return ChatResponseModel.simple('I can only help you with CodeDisha courses and training. How can I assist you?');
     }
 
+    const cleaned = message.trim().toLowerCase();
+
+   if (
+     cleaned === 'hi' ||
+     cleaned === 'hello' ||
+     cleaned === 'start' ||
+     cleaned === 'restart'
+   ) {
+
+     this.sessionState.delete(sessionId);
+
+     return ChatResponseModel.withOptions(
+       'Welcome to CodeDisha! 🎓\n\nHow can I help you today?',
+       [
+         'Explore Courses',
+         'Trainer Details',
+         'Placement Support',
+         'Fees',
+         'Request Callback'
+       ]
+     );
+   }
+
     if (sessionId && this.sessionState.has(sessionId)) return this.handleConversationState(message, sessionId);
 
     const intent = await this.intentDetector.detect(message);
@@ -55,7 +78,24 @@ export class ChatServiceImpl implements ChatService {
     }
 
     const response = await this.resolveResponse(intent, message, sessionId);
-    return ChatResponseModel.simple(response);
+
+        if (
+          intent.intentName &&
+          intent.intentName.toLowerCase() === 'greeting'
+        ) {
+          return ChatResponseModel.withOptions(
+            response,
+            [
+              'Explore Courses',
+              'Trainer Details',
+              'Placement Support',
+              'Fees',
+              'Request Callback'
+            ]
+          );
+        }
+
+        return ChatResponseModel.simple(response);
   }
 
   private async resolveResponse(intent: any, message: string, sessionId: string): Promise<string> {
@@ -177,7 +217,7 @@ export class ChatServiceImpl implements ChatService {
     }
   }
 
-  // ─── Conversation state handler ─────────────────────────────────────────────
+
 
   private async handleConversationState(message: string, sessionId: string): Promise<ChatResponseModel> {
     const state = this.sessionState.get(sessionId);
@@ -185,7 +225,6 @@ export class ChatServiceImpl implements ChatService {
 
     switch (step) {
 
-      // ── Callback / Enrollment flow ─────────────────────────────────────────
 
       case 'AWAITING_NAME': {
         const name = message.trim();
@@ -239,11 +278,12 @@ export class ChatServiceImpl implements ChatService {
         lead.status       = 'PENDING';
         await this.leadRepo.save(lead);
 
-        //  Feature 3 — WhatsApp notifications (fire-and-forget)
+
+
         this.whatsApp.sendToStudent(lead.phone, lead.name, lead.interestedIn).catch(() => {});
         this.whatsApp.notifySalesTeam(lead.phone, lead.name, lead.email, lead.interestedIn, lead.requestType).catch(() => {});
 
-        //  Feature 2 — Move to referral step instead of ending session
+
         state?.set('phone', phone);
         state?.set('step', 'AWAITING_REFERRAL');
 
@@ -256,7 +296,7 @@ export class ChatServiceImpl implements ChatService {
         );
       }
 
-      // ── Feature 2 — Referral Capture ──────────────────────────────────────
+
 
       case 'AWAITING_REFERRAL': {
         const input = message.trim().toLowerCase();
@@ -274,11 +314,32 @@ export class ChatServiceImpl implements ChatService {
       }
 
       case 'AWAITING_REFERRAL_PHONE': {
-        const phone = message.trim().replace(/\s+/g, '');
-        if (!/^\d{10,15}$/.test(phone))
-          return ChatResponseModel.simple('Please enter a valid 10-digit phone number for your friend.');
+       const phone = message.trim().replace(/\s+/g, '');
 
-        const referral = new Referral();
+       if (!/^\d{10,15}$/.test(phone))
+         return ChatResponseModel.simple(
+           'Please enter a valid 10-digit phone number for your friend.'
+         );
+
+
+       const ownPhone = state?.get('phone') ?? '';
+
+       if (phone === ownPhone) {
+         return ChatResponseModel.simple(
+           'You cannot refer your own phone number. Please enter a different number.'
+         );
+       }
+
+        const existingReferral =
+        await this.referralRepo.findByReferredPhone(phone);
+
+       if (existingReferral) {
+         return ChatResponseModel.simple(
+           'This phone number has already been referred. Please enter a different phone number.'
+         );
+       }
+
+       const referral = new Referral();
         referral.referrerName  = state?.get('name') ?? '';
         referral.referrerPhone = state?.get('phone') ?? '';
         referral.referredName  = state?.get('referredName') ?? '';
@@ -303,7 +364,7 @@ export class ChatServiceImpl implements ChatService {
         );
       }
 
-      // ── Feature 1 — Course Fit Quiz ────────────────────────────────────────
+
 
       case 'QUIZ_LEVEL': {
         const lower = message.trim().toLowerCase();
@@ -344,7 +405,7 @@ case 'QUIZ_GOAL': {
     );
 
   state?.set('quizGoal', goal);
-  state?.set('step', 'QUIZ_MODE');          // ← changed from QUIZ_TIME
+  state?.set('step', 'QUIZ_MODE');
   return ChatResponseModel.simple(
     `Got it! What learning mode do you prefer?\n\n` +
     `1. Online (learn from anywhere)\n` +
@@ -410,15 +471,15 @@ case 'QUIZ_TIME': {
   state?.set('quizTime', time);
   const level  = state?.get('quizLevel')  ?? '';
   const goal   = state?.get('quizGoal')   ?? '';
-  const mode   = state?.get('quizMode')   ?? '';          // ← new
-  const months = parseInt(state?.get('quizMonths') ?? '0'); // ← new
+  const mode   = state?.get('quizMode')   ?? '';
+  const months = parseInt(state?.get('quizMonths') ?? '0');
   const allCourses = await this.courseRepo.findByStatusTrue();
   const recommendation = this.recommendCourse(level, goal, time, mode, months, allCourses);
   this.sessionState.delete(sessionId);
   return ChatResponseModel.simple(recommendation);
 }
 
-      // ── Default ────────────────────────────────────────────────────────────
+
 
       default:
         this.sessionState.delete(sessionId);
@@ -426,7 +487,7 @@ case 'QUIZ_TIME': {
     }
   }
 
-  // ─── Feature 1 helper — Course recommendation logic ─────────────────────────
+
 
 private recommendCourse(
   level: string, goal: string, time: string,
@@ -434,20 +495,17 @@ private recommendCourse(
   courses: any[]
 ): string {
 
-  // ── Step 1: Hard filter by MODE ──────────────────────────────────────────
-  // hybrid preference accepts all modes; otherwise must match
+
   let modeFiltered = preferredMode === 'hybrid'
     ? courses
     : courses.filter(c => {
         const courseMode = c.mode?.toLowerCase() ?? '';
-        // "hybrid" courses are acceptable for both online & offline seekers
+
         return courseMode.includes(preferredMode) || courseMode.includes('hybrid');
       });
 
-  if (modeFiltered.length === 0) modeFiltered = courses; // fallback: no match, use all
+  if (modeFiltered.length === 0) modeFiltered = courses;
 
-  // ── Step 2: Hard filter by MONTHS — keep courses student can finish ──────
-  // Keep courses whose duration (in months) <= student's available months
   const durationInMonths = (c: any): number => {
     const match = (c.duration ?? '').match(/(\d+)/);
     return match ? parseInt(match[1]) : 0;
@@ -455,15 +513,15 @@ private recommendCourse(
 
   const monthsFiltered = modeFiltered.filter(c => {
     const d = durationInMonths(c);
-    return d === 0 || d <= availableMonths; // 0 = unknown duration, don't exclude
+    return d === 0 || d <= availableMonths;
   });
 
-  // If nothing fits the months constraint, relax to closest match
+
   const pool = monthsFiltered.length > 0
     ? monthsFiltered
     : modeFiltered.sort((a, b) => durationInMonths(a) - durationInMonths(b)).slice(0, 2);
 
-  // ── Step 3: Score remaining courses ─────────────────────────────────────
+
   const scores = new Map<any, number>();
 
   for (const course of pool) {
@@ -472,7 +530,7 @@ private recommendCourse(
     const skills = course.skills?.toLowerCase()     ?? '';
     const d      = durationInMonths(course);
 
-    // LEVEL scoring
+
     if (level === 'BEGINNER') {
       if (name.includes('python') || skills.includes('python')) score += 2;
       if (name.includes('basic')  || name.includes('foundation')) score += 2;
@@ -487,7 +545,7 @@ private recommendCourse(
       if (d >= 4) score += 1;
     }
 
-    // GOAL scoring
+
     if (goal === 'JOB') {
       if (course.highlights?.toLowerCase().includes('placement')) score += 3;
       if (course.highlights?.toLowerCase().includes('job'))       score += 3;
@@ -507,12 +565,12 @@ private recommendCourse(
       if (skills.includes('project')  || course.highlights?.toLowerCase().includes('project')) score += 2;
     }
 
-    // TIME scoring
+
     if (time === 'LOW'    && d > 0 && d <= 3) score += 2;
     if (time === 'MEDIUM' && d >= 3 && d <= 6) score += 2;
     if (time === 'HIGH'   && d >= 5)           score += 2;
 
-    // BONUS: closer to student's available months = better fit
+
     const monthsDiff = Math.abs(d - availableMonths);
     if (monthsDiff === 0) score += 3;
     else if (monthsDiff === 1) score += 2;
@@ -522,7 +580,7 @@ private recommendCourse(
     console.log(`QUIZ SCORE: ${course.name} → ${score} (mode: ${course.mode}, duration: ${course.duration})`);
   }
 
-  // ── Step 4: Pick winner ──────────────────────────────────────────────────
+
   let recommended = pool[0];
   let maxScore = -1;
   for (const [course, score] of scores.entries()) {
@@ -532,7 +590,7 @@ private recommendCourse(
   if (!recommended)
     return 'Sorry, no active courses match your preferences right now. Please contact us directly!';
 
-  // ── Step 5: Build response ───────────────────────────────────────────────
+
   const levelLabel = level === 'BEGINNER' ? 'a complete beginner'
                    : level === 'INTERMEDIATE' ? 'someone with basic coding knowledge'
                    : 'a working professional';
@@ -553,7 +611,6 @@ private recommendCourse(
   response += `Would you like to book a free callback or request more details? 😊`;
   return response;
 }
-  // ─── Existing helpers (unchanged) ───────────────────────────────────────────
 
   private fillCourse(template: string | null, course: any): string {
     return template
