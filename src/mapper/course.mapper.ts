@@ -34,6 +34,15 @@ export class CourseMapper {
     course.status =
       dto.status;
 
+    course.batchTiming =
+      dto.batchTiming ?? '';
+
+    course.nextBatchDate =
+      dto.nextBatchDate ?? '';
+
+    course.brochureUrl =
+      dto.brochureUrl ?? '';
+
     return course;
   }
 
@@ -56,6 +65,12 @@ export class CourseMapper {
       course.highlights,
 
       course.status,
+
+      course.batchTiming,
+
+      course.nextBatchDate,
+
+      course.brochureUrl,
     );
   }
 }

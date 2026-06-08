@@ -624,14 +624,32 @@ private recommendCourse(
   }
 
   private formatCourseDetail(course: any): string {
+
     let response = `📚 ${course.name}\n`;
-    if (course.duration)   response += `Duration: ${course.duration}\n`;
-    if (course.mode)       response += `Mode: ${course.mode}\n`;
-    if (course.skills)     response += `Skills: ${course.skills}\n`;
-    if (course.highlights) response += `Highlights: ${course.highlights}\n`;
+
+    if (course.duration)
+      response += `⏳ Duration: ${course.duration}\n`;
+
+    if (course.mode)
+      response += `💻 Mode: ${course.mode}\n`;
+
+    if (course.batchTiming)
+      response += `🕒 Batch Timing: ${course.batchTiming}\n`;
+
+    if (course.nextBatchDate)
+      response += `📅 Next Batch: ${course.nextBatchDate}\n`;
+
+    if (course.skills)
+      response += `🚀 Skills: ${course.skills}\n`;
+
+    if (course.highlights)
+      response += `✨ Highlights: ${course.highlights}\n`;
+
+   if (course.brochureUrl)
+     response += `📄 Download Brochure:\n${course.brochureUrl}\n`;
+
     return response;
   }
-
   private formatCourseList(courses: any[], template: string | null): string {
     if (courses.length === 1 && template) return this.fillCourse(template, courses[0]);
     let response = 'Here are our available courses:\n\n';
