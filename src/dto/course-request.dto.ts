@@ -14,4 +14,10 @@ export class CourseRequestDto {
   highlights!: string;
 
   status!: boolean;
+
+  batchTiming?: string;
+
+  nextBatchDate?: string;
+
+  brochureUrl?: string;
 }
