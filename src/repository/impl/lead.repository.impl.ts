@@ -1,5 +1,3 @@
-// repository/impl/lead.repository.impl.ts
-
 import { Injectable }from '@nestjs/common';
 import { InjectRepository }from '@nestjs/typeorm';
 import { Repository }from 'typeorm';

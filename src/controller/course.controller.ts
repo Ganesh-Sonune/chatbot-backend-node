@@ -25,7 +25,6 @@ export class CourseController {
 
   constructor(private readonly service: CourseService) {}
 
-  // ✅ CREATE (ADMIN ONLY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ROLE_ADMIN')
   @Post()
@@ -39,7 +38,6 @@ export class CourseController {
     return CourseMapper.toDTO(saved);
   }
 
-  // 🔐 GET BY ID (LOGIN REQUIRED)
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   async get(
@@ -50,7 +48,6 @@ export class CourseController {
     return CourseMapper.toDTO(course);
   }
 
-  // 🔐 UPDATE (ADMIN ONLY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ROLE_ADMIN')
   @Put(':id')
@@ -65,7 +62,6 @@ export class CourseController {
     return CourseMapper.toDTO(updated);
   }
 
-  // 🔐 DELETE (ADMIN ONLY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ROLE_ADMIN')
   @Delete(':id')
@@ -77,7 +73,7 @@ export class CourseController {
     return 'Deleted successfully';
   }
 
-  // 🔐 SEARCH (LOGIN REQUIRED)
+
   @UseGuards(JwtAuthGuard)
   @Get()
   async search(
@@ -102,7 +98,6 @@ export class CourseController {
     return result.map(course => CourseMapper.toDTO(course));
   }
 
-  // 🔐 STATUS UPDATE (ADMIN ONLY)
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ROLE_ADMIN')
   @Patch(':id/status')

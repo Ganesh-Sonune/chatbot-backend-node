@@ -1,5 +1,3 @@
-// faq.controller.ts
-
 import { Body,Controller,Delete,Get,Param,Patch,Post,Put,Query, }from '@nestjs/common';
 import { FaqRequestDto }from '../dto/faq-request.dto';
 import { FaqResponseDto }from '../dto/faq-response.dto';

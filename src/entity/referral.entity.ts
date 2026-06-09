@@ -21,7 +21,7 @@ export class Referral {
   interestedIn!: string;
 
   @Column({ default: 'PENDING' })
-  status!: string;               // PENDING | CONTACTED | CONVERTED
+  status!: string;
 
   @CreateDateColumn()
   createdAt!: Date;

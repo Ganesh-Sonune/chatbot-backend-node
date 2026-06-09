@@ -1,5 +1,3 @@
-// intent.controller.ts
-
 import { Body,Controller,Delete,Get,Param,Patch,Post,Put,Query, }from '@nestjs/common';
 import { Intent }from '../entity/intent.entity';
 import { IntentService }from '../service/intent.service';
