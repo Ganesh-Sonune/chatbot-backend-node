@@ -74,6 +74,10 @@ import { RolesGuard } from './security/roles.guard';
 
 import { DataSeeder } from './seeder/data.seeder';
 import { WhatsAppService } from './service/whatsapp.service';
+import { AdminActivity } from './entity/admin-activity.entity';
+import { AdminService } from './service/admin/admin.service';
+import { AdminServiceImpl } from './service/admin/impl/admin.service.impl';
+import { AdminController } from './controller/admin.controller';
 
 @Module({
 
@@ -97,6 +101,7 @@ import { WhatsAppService } from './service/whatsapp.service';
                 Trainer,
                 User,
                 Referral,
+                AdminActivity,
             ],
             synchronize: true,
         }),
@@ -110,10 +115,12 @@ import { WhatsAppService } from './service/whatsapp.service';
             Trainer,
             User,
             Referral,
+            AdminActivity,
         ]),
     ],
 
     controllers: [
+        AdminController,
         AppController,
         AnalyticsController,
         AuthController,
@@ -157,6 +164,10 @@ import { WhatsAppService } from './service/whatsapp.service';
         {
           provide: AuthService,
           useClass: AuthServiceImpl
+        },
+        {
+            provide: AdminService,
+            useClass: AdminServiceImpl
         },
     ],
 })

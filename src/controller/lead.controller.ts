@@ -1,5 +1,3 @@
-// lead.controller.ts
-
 import { Body,Controller,Get,Param,Patch,Post,Query, }from '@nestjs/common';
 import { LeadRequestDto }from '../dto/lead-request.dto';
 import { LeadResponseDto }from '../dto/lead-response.dto';

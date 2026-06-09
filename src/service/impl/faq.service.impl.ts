@@ -1,5 +1,3 @@
-// faq.service.impl.ts
-
 import { Injectable } from '@nestjs/common';
 import { FaqEntry }from '../../entity/faq-entry.entity';
 import { ResourceNotFoundException }from '../../exception/resource-not-found.exception';

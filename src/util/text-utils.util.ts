@@ -1,5 +1,3 @@
-// util/text-utils.util.ts
-
 export class TextUtils {
 
 static toLower(input:string,):string{

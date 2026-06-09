@@ -43,6 +43,18 @@ export class CourseMapper {
     course.brochureUrl =
       dto.brochureUrl ?? '';
 
+    course.placementSupport =
+      dto.placementSupport ?? '';
+
+    course.placementPercentage =
+      dto.placementPercentage ?? '';
+
+    course.highestPackage =
+      dto.highestPackage ?? '';
+
+    course.hiringCompanies =
+      dto.hiringCompanies ?? '';
+
     return course;
   }
 
@@ -71,6 +83,14 @@ export class CourseMapper {
       course.nextBatchDate,
 
       course.brochureUrl,
+
+      course.placementSupport,
+
+      course.placementPercentage,
+
+      course.highestPackage,
+
+      course.hiringCompanies,
     );
   }
 }

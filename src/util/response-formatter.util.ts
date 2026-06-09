@@ -1,5 +1,3 @@
-// util/response-formatter.util.ts
-
 export class ResponseFormatter {
 
 static shortReply(text:string,):string{

@@ -20,4 +20,12 @@ export class CourseRequestDto {
   nextBatchDate?: string;
 
   brochureUrl?: string;
+
+  placementSupport?: string;
+
+  placementPercentage?: string;
+
+  highestPackage?: string;
+
+  hiringCompanies?: string;
 }

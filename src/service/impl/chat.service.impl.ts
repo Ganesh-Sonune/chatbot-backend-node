@@ -8,12 +8,12 @@ import { CourseRepository } from '../../repository/course.repository';
 import { TrainerRepository } from '../../repository/trainer.repository';
 import { BotConfigRepository } from '../../repository/bot-config.repository';
 import { LeadRepository } from '../../repository/lead.repository';
-import { ReferralRepository } from '../../repository/referral.repository';     // Feature 2
+import { ReferralRepository } from '../../repository/referral.repository';
 import { DurationParserService } from '../duration-parser.service';
-import { WhatsAppService } from '../whatsapp.service';                          // Feature 3
+import { WhatsAppService } from '../whatsapp.service';
 import { TextUtil } from '../../util/text-util.util';
 import { Lead } from '../../entity/lead.entity';
-import { Referral } from '../../entity/referral.entity';                          // Feature 2
+import { Referral } from '../../entity/referral.entity';
 
 @Injectable()
 export class ChatServiceImpl implements ChatService {
