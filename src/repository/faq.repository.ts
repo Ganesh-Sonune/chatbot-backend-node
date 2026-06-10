@@ -8,7 +8,7 @@ export abstract class FaqRepository {
 
   abstract findById(id: number,): Promise<FaqEntry | null>;
 
-  abstract findAll(page: number,size: number,): Promise<FaqEntry[]>;
+  abstract findAll(page: number, size: number): Promise<{ data: FaqEntry[]; total: number }>;
 
   abstract searchByKeyword(keyword: string,): Promise<FaqEntry[]>;
 
@@ -16,6 +16,11 @@ export abstract class FaqRepository {
 
   abstract countByQuestion(): Promise<any[]>;
 
-  abstract search(questionFilter: any,statusFilter: any,page: number,size: number,): Promise<FaqEntry[]>;
+  abstract search(
+             question: string,
+             isActive: boolean | undefined,
+             page: number,
+             size: number
+           ): Promise<{ data: FaqEntry[]; total: number }>;
 
 }
