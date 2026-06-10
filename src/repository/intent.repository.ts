@@ -16,4 +16,6 @@ export abstract class IntentRepository {
 
   abstract existsByIntentName(intentName: string,): Promise<boolean>;
 
+   abstract countAll(): Promise<number>;
+
 }

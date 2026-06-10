@@ -25,7 +25,6 @@ export class AdminServiceImpl extends AdminService {
     super();
   }
 
-  // ---------------- ADD ADMIN ----------------
   async addAdmin(username: string, password: string) {
 
     const existing = await this.userRepo.findOne({
@@ -54,19 +53,15 @@ export class AdminServiceImpl extends AdminService {
     return admin;
   }
 
-  // ---------------- GET ADMINS ----------------
   async getAdmins() {
     return this.userRepo.find({
       where: { role: Role.ROLE_ADMIN },
-
-      // newest admin first
       order: {
         id: 'DESC'
       }
     });
   }
 
-  // ---------------- TOGGLE ADMIN ----------------
   async toggleAdmin(id: number) {
 
     const admin = await this.userRepo.findOneBy({ id });
@@ -88,7 +83,6 @@ export class AdminServiceImpl extends AdminService {
     return admin;
   }
 
-  // ---------------- RESET PASSWORD ----------------
   async resetPassword(id: number, password: string) {
 
     const admin = await this.userRepo.findOneBy({ id });
@@ -114,7 +108,6 @@ export class AdminServiceImpl extends AdminService {
     };
   }
 
-  // ---------------- ACTIVITY ----------------
   async getActivity() {
     return this.activityRepo.find({
       order: {
@@ -123,7 +116,6 @@ export class AdminServiceImpl extends AdminService {
     });
   }
 
-  // ---------------- LOGGER ----------------
   private async log(
     adminId: number,
     action: string,
