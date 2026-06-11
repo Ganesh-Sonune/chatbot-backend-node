@@ -74,30 +74,36 @@ export class CourseController {
   }
 
 
-  @UseGuards(JwtAuthGuard)
-  @Get()
-  async search(
-    @Query('name') name = '',
-    @Query('mode') mode = '',
-    @Query('isActive') isActive?: string,
-    @Query('page') page = 0,
-    @Query('size') size = 5,
-  ): Promise<CourseResponseDto[]> {
+@UseGuards(JwtAuthGuard)
+@Get()
+async search(
+  @Query('name') name = '',
+  @Query('mode') mode = '',
+  @Query('isActive') isActive?: string,
+  @Query('page') page = 0,
+  @Query('size') size = 5,
+) {
 
-    const statusFilter =
-      isActive === undefined ? undefined : isActive === 'true';
+  const statusFilter =
+    isActive === undefined ? undefined : isActive === 'true';
 
-    const result = await this.service.search(
-      name,
-      mode,
-      statusFilter as any,
-      Number(page),
-      Number(size),
-    );
+  const result = await this.service.search(
+    name,
+    mode,
+    statusFilter as any,
+    Number(page),
+    Number(size),
+  );
 
-    return result.map(course => CourseMapper.toDTO(course));
-  }
-
+  return {
+    success: true,
+    data: result.data.map(course => CourseMapper.toDTO(course)),
+    total: result.total,
+    page: Number(page),
+    size: Number(size),
+    totalPages: result.totalPages,
+  };
+}
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles('ROLE_ADMIN')
   @Patch(':id/status')
