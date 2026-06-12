@@ -25,33 +25,37 @@ export class AdminServiceImpl extends AdminService {
     super();
   }
 
-  async addAdmin(username: string, password: string) {
+ async addAdmin(username: string, password: string) {
 
-    const existing = await this.userRepo.findOne({
-      where: { username }
-    });
+   if (!username || username.trim() === '') {
+     throw new BadRequestException('Username is required');
+   }
 
-    if (existing) {
-      throw new BadRequestException('Username already exists');
-    }
+   if (!password || password.trim() === '') {
+     throw new BadRequestException('Password is required');
+   }
 
-    const hash = await bcrypt.hash(password, 10);
+   const existing = await this.userRepo.findOne({
+     where: { username }
+   });
 
-    const admin = await this.userRepo.save({
-      username,
-      password: hash,
-      role: Role.ROLE_ADMIN,
-      enabled: true
-    });
+   if (existing) {
+     throw new BadRequestException('Username already exists');
+   }
 
-    await this.log(
-      admin.id,
-      'CREATE_ADMIN',
-      'New admin created'
-    );
+   const hash = await bcrypt.hash(password, 10);
 
-    return admin;
-  }
+   const admin = await this.userRepo.save({
+     username,
+     password: hash,
+     role: Role.ROLE_ADMIN,
+     enabled: true
+   });
+
+   await this.log(admin.id, 'CREATE_ADMIN', 'New admin created');
+
+   return admin;
+ }
 
   async getAdmins() {
     return this.userRepo.find({
@@ -127,4 +131,21 @@ export class AdminServiceImpl extends AdminService {
       description
     });
   }
+
+ updateAdmin(id: number, username: string, password?: string) {
+
+   const updateData: any = {
+     username
+   };
+
+   if (password && password.trim() !== '') {
+     updateData.password = bcrypt.hashSync(password, 10);
+   }
+
+   return this.userRepo.update(id, updateData);
+ }
+
+    deleteAdmin(id: number): Promise<any> {
+      return this.userRepo.delete(id);
+    }
 }
