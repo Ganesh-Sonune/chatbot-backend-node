@@ -10,10 +10,10 @@ export class TextUtil {
     'u', 'ur', 'provide', 'have', 'has', 'its', 'it',
     'yes', 'no', 'ok', 'okay', 'hi', 'hey', 'hello', 'bye',
     'thanks', 'thank', 'sorry',
-    // REMOVED: love, like, flirt, sex, sexy, hate, miss
+
   ]);
 
-  //  New — checked BEFORE stopword filtering
+
   private static readonly INAPPROPRIATE_WORDS = new Set([
     'flirt', 'flirting', 'sex', 'sexy', 'love', 'hate',
     'kiss', 'dating', 'marry', 'nude', 'naked',
@@ -27,7 +27,7 @@ export class TextUtil {
     /\byou\s+(are|re)\s+(cute|hot|beautiful)\b/i,
   ];
 
-  //  Call this in ChatServiceImpl BEFORE intent detection
+
   static isInappropriate(message: string): boolean {
     const cleaned = message.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').trim();
     const words = cleaned.split(/\s+/);

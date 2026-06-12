@@ -14,6 +14,8 @@ export class DataSeeder implements OnModuleInit {
 
   async onModuleInit():Promise<void> {
 
+      console.log('Seeder running...');
+
     const existingUser=await this.userRepo.findByUsername('admin',);
 
     if(existingUser){return;}

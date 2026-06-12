@@ -7,28 +7,45 @@ import { ReferralService } from '../referral.service';
 @Injectable()
 export class ReferralServiceImpl extends ReferralService {
 
-    constructor(private readonly repo: ReferralRepository,) { super(); }
+  constructor(private readonly repo: ReferralRepository) {
+    super();
+  }
 
-    async getById(id: number): Promise<Referral> {
-        const referral = await this.repo.findById(id);
-        if (!referral) { throw new ResourceNotFoundException(`Referral not found: ${id}`); }
-        return referral;
+  async getById(id: number): Promise<Referral> {
+    const referral = await this.repo.findById(id);
+    if (!referral) {
+      throw new ResourceNotFoundException(`Referral not found: ${id}`);
     }
+    return referral;
+  }
 
-    async search(
-        referrerPhone: string,
-        referredPhone: string,
-        status: string,
-        page: number,
-        size: number,
-    ): Promise<Referral[]> {
-        return await this.repo.search(referrerPhone, referredPhone, status, page, size,);
-    }
+  async search(
+    referrerPhone: string,
+    referredPhone: string,
+    status: string,
+    page: number,
+    size: number,
+  ) {
+    const result = await this.repo.search(
+      referrerPhone,
+      referredPhone,
+      status,
+      page,
+      size,
+    );
 
-    async updateStatus(id: number, status: string): Promise<void> {
-        const referral = await this.getById(id);
-        referral.status = status;
-        await this.repo.save(referral);
-    }
+    return {
+      data: result.data,
+      total: result.total,
+      page,
+      size,
+      totalPages: result.totalPages,
+    };
+  }
 
+  async updateStatus(id: number, status: string): Promise<void> {
+    const referral = await this.getById(id);
+    referral.status = status;
+    await this.repo.save(referral);
+  }
 }

@@ -5,6 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
+import { AuthService } from './service/auth.service';
+import { AuthServiceImpl } from './service/impl/auth.service.impl';
+
 import { AnalyticsController } from './controller/analytics.controller';
 import { AuthController } from './controller/auth.controller';
 import { BotConfigController } from './controller/bot-config.controller';
@@ -71,6 +74,10 @@ import { RolesGuard } from './security/roles.guard';
 
 import { DataSeeder } from './seeder/data.seeder';
 import { WhatsAppService } from './service/whatsapp.service';
+import { AdminActivity } from './entity/admin-activity.entity';
+import { AdminService } from './service/admin/admin.service';
+import { AdminServiceImpl } from './service/admin/impl/admin.service.impl';
+import { AdminController } from './controller/admin.controller';
 
 @Module({
 
@@ -80,11 +87,11 @@ import { WhatsAppService } from './service/whatsapp.service';
 
         TypeOrmModule.forRoot({
             type: 'mysql',
-            host: 'localhost',
-            port: 3306,
-            username: 'root',
-            password: 'Lasan@123',
-            database: 'chatbot_db',
+          host: process.env.DB_HOST,
+          port: Number(process.env.DB_PORT),
+          username: process.env.DB_USERNAME,
+          password: process.env.DB_PASSWORD,
+          database: process.env.DB_NAME,
             entities: [
                 BotConfig,
                 Course,
@@ -94,6 +101,7 @@ import { WhatsAppService } from './service/whatsapp.service';
                 Trainer,
                 User,
                 Referral,
+                AdminActivity,
             ],
             synchronize: true,
         }),
@@ -107,10 +115,12 @@ import { WhatsAppService } from './service/whatsapp.service';
             Trainer,
             User,
             Referral,
+            AdminActivity,
         ]),
     ],
 
     controllers: [
+        AdminController,
         AppController,
         AnalyticsController,
         AuthController,
@@ -151,6 +161,14 @@ import { WhatsAppService } from './service/whatsapp.service';
         { provide: DurationParserService,   useClass: DurationParserServiceImpl,   },
         { provide: ReferralRepository,      useClass: ReferralRepositoryImpl,      },
         { provide: ReferralService,         useClass: ReferralServiceImpl,         },
+        {
+          provide: AuthService,
+          useClass: AuthServiceImpl
+        },
+        {
+            provide: AdminService,
+            useClass: AdminServiceImpl
+        },
     ],
 })
 

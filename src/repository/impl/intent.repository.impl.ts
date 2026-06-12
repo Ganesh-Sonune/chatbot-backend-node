@@ -1,5 +1,3 @@
-// repository/impl/intent.repository.impl.ts
-
 import { Injectable }from '@nestjs/common';
 import { InjectRepository }from '@nestjs/typeorm';
 import { ILike,Repository }from 'typeorm';
@@ -26,11 +24,18 @@ async findById(id:number,):Promise<Intent|null>{
 return await this.repo.findOne({where:{id,},});
 }
 
-async findAll(page:number,size:number,):Promise<Intent[]>{
-return await this.repo.find({
-skip:page*size,
-take:size,
-});
+async findAll(page: number, size: number) {
+  const [data, total] = await this.repo.findAndCount({
+    skip: page * size,
+    take: size,
+    order: { id: 'DESC' }
+  });
+
+  return data;
+}
+
+async countAll(): Promise<number> {
+  return this.repo.count();
 }
 
 async findByStatusTrue():Promise<Intent[]>{

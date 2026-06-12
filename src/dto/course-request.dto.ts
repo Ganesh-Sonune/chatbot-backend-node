@@ -14,4 +14,18 @@ export class CourseRequestDto {
   highlights!: string;
 
   status!: boolean;
+
+  batchTiming?: string;
+
+  nextBatchDate?: string;
+
+  brochureUrl?: string;
+
+  placementSupport?: string;
+
+  placementPercentage?: string;
+
+  highestPackage?: string;
+
+  hiringCompanies?: string;
 }

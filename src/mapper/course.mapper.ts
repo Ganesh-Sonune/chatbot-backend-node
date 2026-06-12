@@ -34,6 +34,27 @@ export class CourseMapper {
     course.status =
       dto.status;
 
+    course.batchTiming =
+      dto.batchTiming ?? '';
+
+    course.nextBatchDate =
+      dto.nextBatchDate ?? '';
+
+    course.brochureUrl =
+      dto.brochureUrl ?? '';
+
+    course.placementSupport =
+      dto.placementSupport ?? '';
+
+    course.placementPercentage =
+      dto.placementPercentage ?? '';
+
+    course.highestPackage =
+      dto.highestPackage ?? '';
+
+    course.hiringCompanies =
+      dto.hiringCompanies ?? '';
+
     return course;
   }
 
@@ -56,6 +77,20 @@ export class CourseMapper {
       course.highlights,
 
       course.status,
+
+      course.batchTiming,
+
+      course.nextBatchDate,
+
+      course.brochureUrl,
+
+      course.placementSupport,
+
+      course.placementPercentage,
+
+      course.highestPackage,
+
+      course.hiringCompanies,
     );
   }
 }

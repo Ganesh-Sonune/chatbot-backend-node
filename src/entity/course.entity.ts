@@ -27,4 +27,25 @@ export class Course extends Auditable {
 
   @Column({ default: true })
   status!: boolean;
+
+  @Column({ nullable: true })
+  batchTiming!: string;
+
+  @Column({ nullable: true })
+  nextBatchDate!: string;
+
+  @Column({ nullable: true })
+  brochureUrl!: string;
+
+  @Column({ nullable: true })
+  placementSupport!: string;
+
+  @Column({ nullable: true })
+  placementPercentage!: string;
+
+  @Column({ nullable: true })
+  highestPackage!: string;
+
+  @Column({ type: 'text', nullable: true })
+  hiringCompanies!: string;
 }

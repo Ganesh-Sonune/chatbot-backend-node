@@ -7,14 +7,14 @@ export class JwtUtil {
 
   private readonly secret ='mySecretKey';
 
-  private readonly expirationMs ='1d';
+  private readonly expirationTime = '1d';
 
   generateToken(username: string,role: string,): string {
 
     return jwt.sign(
       {username,role,},
       this.secret,
-      {expiresIn: this.expirationMs,},
+      {expiresIn: this.expirationTime,},
     );
   }
 

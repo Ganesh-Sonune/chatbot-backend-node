@@ -22,9 +22,18 @@ export class IntentServiceImpl implements IntentService {
     return intent;
   }
 
-  async getAll(page:number,size:number,):Promise<Intent[]> {
-    return await this.repo.findAll(page,size,);
-  }
+async getAll(page: number, size: number): Promise<any> {
+  const data = await this.repo.findAll(page, size);
+  const total = await this.repo.countAll();
+
+  return {
+    data,
+    total,
+    page,
+    size,
+    totalPages: Math.ceil(total / size),
+  };
+}
 
   async update(id:number,intent:Intent,):Promise<Intent> {
     const existing=await this.getById(id,);
